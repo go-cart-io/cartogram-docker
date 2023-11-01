@@ -4,6 +4,7 @@ VOLUME ["/root/web"]
 WORKDIR /root/web/internal
 
 COPY ./cartogram-web/internal/requirements.txt /tmp
+RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
 
 EXPOSE 5000
