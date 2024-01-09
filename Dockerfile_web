@@ -7,5 +7,9 @@ COPY ./cartogram-web/internal/requirements.txt /tmp
 RUN pip install --upgrade pip
 RUN pip install -r /tmp/requirements.txt
 
+COPY ./sources.list /etc/apt/
+RUN apt-get update && apt-get -y install cron
+RUN (crontab -l ; echo "0 0 * * * curl http://localhost:5000/cleanup") | crontab
+
 EXPOSE 5000
 CMD ["sh", "-c", "python -c \"import web; web.db.create_all()\" && python web.py"]
