@@ -1,5 +1,3 @@
-cartogram-serverless/
-cartogram-web/
-postgres-data/
-web-production.env
-web.env
+.env
+password.txt
+data/*

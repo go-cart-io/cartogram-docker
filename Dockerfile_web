@@ -1,11 +1,10 @@
 FROM python:3-stretch
 
-VOLUME ["/root/web"]
-WORKDIR /root/web/internal
+COPY ./cartogram-web/internal /root/internal
+COPY ./cartogram-web/data /root/data
 
-COPY ./cartogram-web/internal/requirements.txt /tmp
 RUN pip install --upgrade pip
-RUN pip install -r /tmp/requirements.txt
+RUN pip install -r /root/internal/requirements.txt
 
 EXPOSE 5000
-CMD ["sh", "-c", "python -c \"import web; web.db.create_all()\" && python web.py"]
+WORKDIR /root/internal

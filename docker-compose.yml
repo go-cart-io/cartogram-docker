@@ -1,64 +1,72 @@
-version: '3'
+version: "3"
 services:
   web:
     build:
       context: .
       dockerfile: Dockerfile_web
+    profiles: [web]
+    env_file:
+      - ./.env
     depends_on:
       - redis
       - postgres
     environment:
-      - CARTOGRAM_DEBUG=TRUE
-      - CARTOGRAM_EXE=
-      - CARTOGRAM_DATA_DIR=/root/web/data
-      - CARTOGRAM_COLOR=#aaaaaa
-      - CARTOGRAM_HOST=0.0.0.0
-      - CARTOGRAM_PORT=5000
-      - CARTOGRAM_VERSION=devel
-      - CARTOGRAM_DATABASE_URI=postgresql://cartogram:cartogram@postgres/cartogram
-      - CARTOGRAM_USE_DATABASE=TRUE
-      - CARTOGRAM_SMTP_HOST=smtp.example.com
-      - CARTOGRAM_SMTP_PORT=25
-      - CARTOGRAM_SMTP_AUTHENTICATION_REQUIRED=TRUE
-      - CARTOGRAM_SMTP_USER=user
-      - CARTOGRAM_SMTP_PASSWORD=password
-      - CARTOGRAM_SMTP_FROM_EMAIL=user@example.com
-      - CARTOGRAM_SMTP_DESTINATION=destination@example.net
-      - CARTOGRAM_GUNICORN_WORKERS=1
-      - CARTOGRAM_GUNICORN_OPTIONS=
-      - CARTOGRAM_LAMBDA_URL=http://serverless:5050/cartogram
-      - CARTOGRAM_LAMBDA_API_KEY=
-      - CARTOGRAM_PROGRESS_SECRET=
-      - CARTOGRAM_REDIS_HOST=redis
-      - CARTOGRAM_REDIS_PORT=6379
-      - CARTOGRAM_GA_TRACKING_ID=
-      - CARTOGRAM_LOCAL_DOCKERIZED=TRUE
+      - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogram
+      - POSTGRES_PASSWORD_FILE=/run/secrets/password
+    command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
     ports:
-      - '5000:5000'
+      - "5000:5000"
     volumes:
-      - ./cartogram-web:/root/web:cached
+      - ./data/userdata:/root/internal/static/userdata
+    secrets:
+      - password
     dns:
       - 8.8.8.8
-  serverless:
+
+  exp:
     build:
       context: .
-      dockerfile: Dockerfile_serverless
+      dockerfile: Dockerfile_web
+    profiles: [exp]
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - postgres
     environment:
-      - LAMBDA_FUNCTION_NAME=cartogram
-      - CARTOGRAM_PROGRESS_URL=http://web:5000/setprogress
-      - CARTOGRAM_PROGRESS_SECRET=
-      - LAMBDA_TASK_ROOT=/root/serverless/lambda_package
-      - LAMBDA_SIMULATOR_HOST=0.0.0.0
-      - LAMBDA_SIMULATOR_PORT=5050
+      - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogramexp
+      - POSTGRES_PASSWORD_FILE=/run/secrets/password
+      - CARTOGRAM_PORT=5001
+      - VITE_SERVER_PORT=5174
+      - CARTOGRAM_GUNICORN_WORKERS=1
+    command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
     ports:
-      - '5050:5050'
-    working_dir: /root/serverless
+      - "5001:5001"
     volumes:
-      - ./cartogram-serverless:/root/serverless:cached
+      - ./cartogram-exp/internal:/root/internal
+      - ./cartogram-exp/data:/root/data
+    secrets:
+      - password
+    dns:
+      - 8.8.8.8
+
   redis:
     image: redis
+    restart: always
+
   postgres:
     image: postgres:12
+    restart: always
     environment:
-      - POSTGRES_PASSWORD=cartogram
       - POSTGRES_USER=cartogram
+      - POSTGRES_PASSWORD_FILE=/run/secrets/password
+      - POSTGRES_MULTIPLE_DATABASES=cartogramexp
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./create-databases.sh:/docker-entrypoint-initdb.d/create-databases.sh
+    secrets:
+      - password
+
+secrets:
+  password:
+    file: password.txt
