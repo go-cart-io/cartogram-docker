@@ -11,11 +11,12 @@ services:
       - redis
       - postgres
     environment:
+      - CARTOGRAM_PORT=5001
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
     command: sh -c "python -c \"import web; web.db.create_all()\" && python web.py"
     ports:
-      - "5000:5000"
+      - "5001:5001"
     volumes:
       - ./cartogram-web/internal:/root/internal
       - ./cartogram-web/data:/root/data
@@ -34,11 +35,11 @@ services:
     environment:
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogramexp
-      - CARTOGRAM_PORT=5001
+      - CARTOGRAM_PORT=5000
       - VITE_SERVER_PORT=5174
     command: sh -c "python -c \"import web; web.db.create_all()\" && python web.py"
     ports:
-      - "5001:5001"
+      - "5000:5000"
     volumes:
       - ./cartogram-exp/internal:/root/internal
       - ./cartogram-exp/data:/root/data

@@ -11,11 +11,12 @@ services:
       - redis
       - postgres
     environment:
+      - CARTOGRAM_PORT=5001
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
     command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
     ports:
-      - "5000:5000"
+      - "5001:5001"
     volumes:
       - ./data/userdata:/root/internal/static/userdata
     secrets:
@@ -36,12 +37,12 @@ services:
     environment:
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogramexp
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
-      - CARTOGRAM_PORT=5001
+      - CARTOGRAM_PORT=5000
       - VITE_SERVER_PORT=5174
       - CARTOGRAM_GUNICORN_WORKERS=1
     command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
     ports:
-      - "5001:5001"
+      - "5000:5000"
     volumes:
       - ./cartogram-exp/internal:/root/internal
       - ./cartogram-exp/data:/root/data
