@@ -13,7 +13,7 @@ performing the following tasks:
 
 ## Architecture Overview
 
-![DeploymentDiagram](deployment-diagram.png "Deployment Diagram")
+![DeploymentDiagram](images/deployment-diagram.png "Deployment Diagram")
 
 The go-cart.io web application consists of two main components:
 `cartogram-serverless` and `cartogram-web`.
@@ -21,7 +21,7 @@ The go-cart.io web application consists of two main components:
 The code in `cartogram-serverless` defines an AWS Lambda function that
 generates cartograms from user data when invoked. The Lambda function
 is made accessible to `cartogram-web` over HTTP via the AWS API
-Gateway.  Because the API Gateway only supports sending a response
+Gateway. Because the API Gateway only supports sending a response
 once all computation has finished, progress information is sent by
 `cartogram-serverless` directly to `cartogram-web` via an HTTP
 endpoint defined by `cartogram-web.`
@@ -121,11 +121,11 @@ the AWS region the Lambda function is located in. If you are unsure,
 take note of the URL when you access the AWS Console. It will look
 something like:
 
-	https://region.console.aws.amazon.com/console/...
+    https://region.console.aws.amazon.com/console/...
 
 So, if your AWS Console URL is:
 
-	https://ap-southeast-1.console.aws.amazon.com/console/home
+    https://ap-southeast-1.console.aws.amazon.com/console/home
 
 `ap-southeast-1` is your AWS region. When you have entered the region
 correctly, click 'Update secret'.
@@ -167,16 +167,16 @@ repository. In this section, you will
 4. Configure GitHub action workflows to automate deployment of new
    changes to `cartogram-web` and `cartogram-docker` to your EC2
    instance.
-   
+
 ### Creating a new Amazon EC2 instance
 
-Sign in  to the AWS  Console and navigate to  the EC2 home.  Under the
+Sign in to the AWS Console and navigate to the EC2 home. Under the
 'Launch instance' section, click the 'Launch instance' button and select
 'Launch instance' again.
 
 First, you must select the EC2 instance image. Scroll down until you
 reach 'Ubuntu Server 20.04 LTS (HVM), SSD Volume Type'. Ensure that
-the '64-bit (x86)' option is checked, and click 'Select'. 
+the '64-bit (x86)' option is checked, and click 'Select'.
 
 Now, select the 't2.micro' instance type, and click 'Review and Launch'
 on the bottom-right. Then, on the review page, click 'Launch' on the
@@ -193,7 +193,7 @@ not be able to log on to your EC2 instance!
 After you download your key, navigate to the folder where you downloaded the
 key file in a terminal window, and change the permissions as follows:
 
-	$ chmod 600 go-cart.pem (or whatever your key file is)
+    $ chmod 600 go-cart.pem (or whatever your key file is)
 
 The SSH client requires private key files to be accessible only to the user
 they belong to. Setting the permission to 600 ensures this.
@@ -211,7 +211,7 @@ SSH to this address to access your new EC2 instance.
 In a terminal window, SSH into your new EC2 instance using the private
 key file you downloaded ealier:
 
-	$ ssh -i your-key-file.pem ubuntu@ip-address-of-ec2-instance
+    $ ssh -i your-key-file.pem ubuntu@ip-address-of-ec2-instance
 
 You may receive a warning about your SSH client being unable to
 establish the authenticity of the new host upon first connection. You
@@ -220,48 +220,48 @@ should type 'yes' and press return to continue.
 First, you will install the nginx web server and the certbot client
 you will use to get an SSL certificate for the website:
 
-	$ sudo apt update
-	$ sudo apt install nginx certbot python3-certbot-nginx
+    $ sudo apt update
+    $ sudo apt install nginx certbot python3-certbot-nginx
 
 Then, install Docker and Docker Compose:
 
-	$ sudo apt install \
-		apt-transport-https \
-		ca-certificates \
-		curl \
-		gnupg-agent \
-		software-properties-common
-	$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-	
+    $ sudo apt install \
+    	apt-transport-https \
+    	ca-certificates \
+    	curl \
+    	gnupg-agent \
+    	software-properties-common
+    $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
 Verify that you now have the key with the fingerprint `9DC8 5822 9FC7
 DD38 854A E2D8 8D81 803C 0EBF CD88`, by searching for the last 8
 characters of the fingerprint.
 
-	$ sudo apt-key fingerprint 0EBFCD88
-	pub   rsa4096 2017-02-22 [SCEA]
-		  9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
-	uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
-	sub   rsa4096 2017-02-22 [S]
+    $ sudo apt-key fingerprint 0EBFCD88
+    pub   rsa4096 2017-02-22 [SCEA]
+    	  9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+    uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
+    sub   rsa4096 2017-02-22 [S]
 
 Now finish installing Docker and Docker Compose:
 
-	$ sudo add-apt-repository \
-	  "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-	  $(lsb_release -cs) \
-	  stable"
-	$ sudo apt update
-	$ sudo apt install docker-ce docker-ce-cli containerd.io
-	$ sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-	$ sudo chmod +x /usr/local/bin/docker-compose
-	
+    $ sudo add-apt-repository \
+      "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+      $(lsb_release -cs) \
+      stable"
+    $ sudo apt update
+    $ sudo apt install docker-ce docker-ce-cli containerd.io
+    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    $ sudo chmod +x /usr/local/bin/docker-compose
+
 Finally, install the
 [ghupdatesecret](https://github.com/jansky/ghupdatesecret/)
 command-line utililty that you will use to configure the GitHub action
 for automated deployment:
 
-	$ sudo apt install python3-pip
-	$ sudo pip3 install ghupdatesecret
-	
+    $ sudo apt install python3-pip
+    $ sudo pip3 install ghupdatesecret
+
 ### Setup `cartogram-web` on the EC2 Instance
 
 Now that you have installed the required software dependencies, you
@@ -269,31 +269,31 @@ can now set up `cartogram-web` to run on your EC2 instance.
 
 First, create a new user account to run the application code:
 
-	$ sudo adduser cartogram --disabled-password
+    $ sudo adduser cartogram --disabled-password
 
 Press return at all the prompts for user information, and answer 'Y'
 when prompted if the information you entered is correct. Then, add the
 `cartogram` user to the `docker` group so it can run Docker commands:
 
-	$ sudo usermod -aG docker cartogram
+    $ sudo usermod -aG docker cartogram
 
 Now, sign on to this account and clone the `cartogram-docker`
 repository:
 
-	$ sudo su - cartogram
-	$ git clone https://github.com/jansky/cartogram-docker.git
+    $ sudo su - cartogram
+    $ git clone https://github.com/jansky/cartogram-docker.git
 
 Now you need to configure environment variables for `cartogram-web`. First, copy the
 environment variables template file:
 
-	$ cd cartogram-docker
-	$ cp web-production.env.dist web-production.env
+    $ cd cartogram-docker
+    $ cp web-production.env.dist web-production.env
 
 Then, open `web-production.env` using `nano` (a simple command-line text
 editor):
 
-	$ nano web-production.env
-	
+    $ nano web-production.env
+
 Set the variables according to the instructions below:
 
 #### SMTP Settings
@@ -301,12 +301,12 @@ Set the variables according to the instructions below:
 Set the following variables to route contact form submissions through
 Mailgun:
 
-	CARTOGRAM_SMTP_HOST=smtp.mailgun.org
-	CARTOGRAM_SMTP_PORT=587
-	CARTOGRAM_SMTP_AUTHENTICATION_REQUIRED=TRUE
-	CARTOGRAM_SMTP_USER=contactform@mg.go-cart.io
-	CARTOGRAM_SMTP_FROM_EMAIL=contactform@mg.go-cart.io
-	CARTOGRAM_SMTP_DESTINATION=support@go-cart.io
+    CARTOGRAM_SMTP_HOST=smtp.mailgun.org
+    CARTOGRAM_SMTP_PORT=587
+    CARTOGRAM_SMTP_AUTHENTICATION_REQUIRED=TRUE
+    CARTOGRAM_SMTP_USER=contactform@mg.go-cart.io
+    CARTOGRAM_SMTP_FROM_EMAIL=contactform@mg.go-cart.io
+    CARTOGRAM_SMTP_DESTINATION=support@go-cart.io
 
 Now you need to reset the password to the `contactform` account. Sign
 in to the [Mailgun
@@ -319,31 +319,29 @@ button for 'contactform@mg.go-cart.io'. Confirm you want to reset the
 password in the modal that pops up, and copy the new password that
 appears on the top-right. Now set the variable appropriately:
 
-	CARTOGRAM_SMTP_PASSWORD=password you just copied
+    CARTOGRAM_SMTP_PASSWORD=password you just copied
 
 #### Lambda Function Settings
 
 Set the following variables to use your new Lambda function for
 cartogram generation:
 
-	CARTOGRAM_LAMBDA_URL=API endpoint URL from the previous section
-	CARTOGRAM_LAMBDA_KEY=API key from the previous section
+    CARTOGRAM_LAMBDA_URL=API endpoint URL from the previous section
+    CARTOGRAM_LAMBDA_KEY=API key from the previous section
 
 Now you need to generate a secret key that the Lambda function will
 use to authenticate itself to `cartogram-web` when sending cartogram
 generation progress information. To do this, first press 'Ctrl-Z' to
 force nano into the background. You should be greeted with the command
 prompt after you do this. Then, run:
-	
-	$ head -c 35 /dev/urandom | base64 | tr -d /+=
-	
+$ head -c 35 /dev/urandom | base64 | tr -d /+=
 Make note of the randomly generated string that appears. Run
 
-	$ fg
+    $ fg
 
 to return to nano, and set the progress secret variable appropriately:
 
-	CARTOGRAM_PROGRESS_SECRET=random string you just generated
+    CARTOGRAM_PROGRESS_SECRET=random string you just generated
 
 At this point, you must also inform the Lambda function of your new
 secret key. Sign in to the AWS Console and navigate to the AWS Lambda
@@ -372,7 +370,7 @@ should begin with UA-).
 
 Then, set the tracking ID variable appropriately:
 
-	CARTOGRAM_GA_TRACKING_ID=tracking ID you just copied
+    CARTOGRAM_GA_TRACKING_ID=tracking ID you just copied
 
 You can leave all other variables unchanged. Save the file and exit
 nano by pressing 'Ctrl-O', then return, and finally 'Ctrl-X'.
@@ -381,7 +379,7 @@ nano by pressing 'Ctrl-O', then return, and finally 'Ctrl-X'.
 
 Start the `cartogram-web` Docker application by running
 
-	$ docker-compose -f production.yml up -d
+    $ docker-compose -f production.yml up -d
 
 `cartogram-web` and its required services are now running in the
 background, and will restart as necessary.
@@ -394,40 +392,40 @@ reverse proxy.
 
 Run
 
-	$ exit
+    $ exit
 
 To get from the `cartogram` user back to the `ubuntu` user where you
 can run commands as root using `sudo`. Then, open up the nginx
 configuration using nano:
 
-	$ sudo nano /etc/ngonx/sites-enabled/default
+    $ sudo nano /etc/ngonx/sites-enabled/default
 
 Find the line reading:
 
-	server_name _;
+    server_name _;
 
 and change it to:
 
-	server_name go-cart.io;
+    server_name go-cart.io;
 
 Then, find the block reading:
 
-	location / {
-		
-		try_files $uri $uri/ =404;
-	}
+    location / {
+
+    	try_files $uri $uri/ =404;
+    }
 
 and change it to:
 
-	location / {
-		
-		proxy_pass http://127.0.0.1:5000;
-	}
+    location / {
+
+    	proxy_pass http://127.0.0.1:5000;
+    }
 
 Press 'Ctrl-O', then return, and finally 'Ctrl-X' to save your changes. Then,
 restart nginx with your new configuration:
 
-	$ sudo systemctl restart nginx
+    $ sudo systemctl restart nginx
 
 #### Domain Name Setup
 
@@ -467,8 +465,8 @@ click 'Save rules' on the bottom-right.
 The final step is to obtain an SSL certificate so that the go-cart.io
 website is accessible over HTTPS. To do this, run
 
-	$ sudo certbot --nginx
-	
+    $ sudo certbot --nginx
+
 on the EC2 instance. This will launch an interactive wizard that will
 help you obtain an SSL certificate from LetsEncrypt and configure
 nginx to use it.
@@ -500,19 +498,19 @@ issues a certificate. Then, you should be greeted with the following prompt:
     new sites, or if you're confident your site works on HTTPS. You can undo this
     change by editing your web server's configuration.
     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    Select the appropriate number [1-2] then [enter] (press 'c' to cancel): 
+    Select the appropriate number [1-2] then [enter] (press 'c' to cancel):
 
 Press '2' and return to enable redirecting all visitors to the HTTPS
 version of the site.
 
 Now, you will enable auto-renewal of this certificate using cron. Run
 
-	$ sudo crontab -e
+    $ sudo crontab -e
 
 Press '1' and return to select nano as the editor. Once nano opens, add the
 following line at the bottom of the file:
 
-	17 2 * * * certbot renew
+    17 2 * * * certbot renew
 
 This will run the certificate renewal program every day at 02:17
 (LetsEncrypt recommends running the renewal program once per day at an
@@ -531,25 +529,25 @@ To configure automated deployment of changes to the `cartogram-web`
 and `cartogram-docker` repositories, you must perform some additional
 actions on your EC2 instance. First, log in to the `cartogram` user:
 
-	$ sudo su - cartogram
+    $ sudo su - cartogram
 
 Then, create the file `deploy.sh` in your home directory using nano:
 
-	$ nano deploy.sh
+    $ nano deploy.sh
 
 Enter the following contents into the file:
 
-	#!/bin/sh
-	cd cartogram-docker
-	git pull || exit 1
-	docker-compose -f production.yml down
-	docker-compose -f production.yml pull || exit 1
-	docker-compose -f production.yml up || exit 1
+    #!/bin/sh
+    cd cartogram-docker
+    git pull || exit 1
+    docker-compose -f production.yml down
+    docker-compose -f production.yml pull || exit 1
+    docker-compose -f production.yml up || exit 1
 
 Press 'Ctrl-O', return, and finally 'Ctrl-X' to save your
 changes. Then, make the script executable:
 
-	$ chmod +x deploy.sh
+    $ chmod +x deploy.sh
 
 Each time you push to the master branch of `cartogram-web` and
 `cartogram-docker`, a GitHub Action workflow will run that will
@@ -562,7 +560,7 @@ Docker images.
 To finish, you need to generate an SSH key that will allow the GitHub Actions
 workflows to connect to your EC2 instance over SSH. To do this, run
 
-	$ ssh-keygen -f github
+    $ ssh-keygen -f github
 
 When prompted, press return twice to set an empty passphrase for the key.
 
@@ -577,19 +575,19 @@ entire 'repo' scope for the new token by checking the box next to
 'repo' in bold. Then, scroll down and click 'Generate token'. Copy the
 generated token to the clipboard. Open a new file called `.token` with nano:
 
-	$ nano .token
+    $ nano .token
 
 Paste your token's contents to the nano window, and press 'Ctrl-O',
 then return, and finally 'Ctrl-X' to save this file.
 
 Now, use `ghupdatesecret` to push your SSH private key to GitHub:
 
-	$ cat github | ghupdatesecret jansky/cartogram-web DEPLOY_SSH_KEY -u your_github_username -p `cat .token`
-	$ cat github | ghupdatesecret jansky/cartogram-docker DEPLOY_SSH_KEY -u your_github_usernae -p `cat .token`
+    $ cat github | ghupdatesecret jansky/cartogram-web DEPLOY_SSH_KEY -u your_github_username -p `cat .token`
+    $ cat github | ghupdatesecret jansky/cartogram-docker DEPLOY_SSH_KEY -u your_github_usernae -p `cat .token`
 
 Now you can delete the `.token` file:
 
-	$ rm .token
+    $ rm .token
 
 You should also delete the personal access token from GitHub. Navigate
 to the Personal access tokens page and click 'Delete' next to the
@@ -598,12 +596,12 @@ token you just created.
 Now, install the public key into your `authorized_keys` file and
 ensure that this file has the proper permissions:
 
-	$ cat github.pub >> ~/.ssh/authorized_keys
-	$ chmod 600 ~/.ssh/authorized_keys
+    $ cat github.pub >> ~/.ssh/authorized_keys
+    $ chmod 600 ~/.ssh/authorized_keys
 
 Finally, you can delete the SSH key files:
 
-	$ rm github github.pub
+    $ rm github github.pub
 
 ## Updating `cartogram-serverless`and `cartogram-web`
 
@@ -614,13 +612,3 @@ you push to the master branch of these repositories (as well as
 
 This means that you should only push to master _after_ you are
 confident that your changes are working.
-
-
-
-
-
-
-
-
-
-	
