@@ -2,8 +2,9 @@ version: "3"
 services:
   web:
     build:
-      context: .
-      dockerfile: Dockerfile_web
+      context: ./cartogram-web/
+      dockerfile: Dockerfile
+    image: gocart-web
     profiles: [web]
     env_file:
       - ./.env
@@ -24,8 +25,9 @@ services:
 
   exp:
     build:
-      context: .
-      dockerfile: Dockerfile_web
+      context: ./cartogram-exp/
+      dockerfile: Dockerfile
+    image: gocart-web
     profiles: [exp]
     env_file:
       - ./.env
