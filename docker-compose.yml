@@ -1,23 +1,21 @@
 version: "3"
 services:
   web:
-    build:
-      context: ./cartogram-web/
-      dockerfile: Dockerfile
-    image: gocart-web
+    image: gocartio/cartogram-web
+    restart: always
     env_file:
       - ./.env
     depends_on:
       - redis
       - postgres
     environment:
-      - CARTOGRAM_PORT=5001
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
     command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
     ports:
-      - "5001:5001"
+      - "5001:5000"
     volumes:
+      - ./cartogram-web/internal:/root/internal
       - ./data/userdata:/root/internal/static/userdata
     secrets:
       - password
@@ -25,10 +23,7 @@ services:
       - 8.8.8.8
 
   exp:
-    build:
-      context: ./cartogram-web/
-      dockerfile: Dockerfile
-    image: gocart-web
+    image: gocartio/cartogram-web
     profiles: [exp]
     env_file:
       - ./.env
@@ -38,7 +33,6 @@ services:
     environment:
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogramexp
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
-      - CARTOGRAM_PORT=5000
       - VITE_SERVER_PORT=5174
       - CARTOGRAM_GUNICORN_WORKERS=1
     command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
@@ -53,11 +47,11 @@ services:
       - 8.8.8.8
 
   redis:
-    image: redis
+    image: redis:alpine
     restart: always
 
   postgres:
-    image: postgres:12
+    image: postgres:12-alpine
     restart: always
     environment:
       - POSTGRES_USER=cartogram

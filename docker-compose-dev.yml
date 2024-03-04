@@ -4,7 +4,7 @@ services:
     build:
       context: ./cartogram-web/
       dockerfile: Dockerfile
-    image: gocart-web
+    image: gocartio/cartogram-web
     profiles: [web]
     env_file:
       - ./.env
@@ -12,12 +12,11 @@ services:
       - redis
       - postgres
     environment:
-      - CARTOGRAM_PORT=5001
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
     command: sh -c "python -c \"import web; web.db.create_all()\" && python web.py"
     ports:
-      - "5001:5001"
+      - "5001:5000"
     volumes:
       - ./cartogram-web/internal:/root/internal
       - ./cartogram-web/data:/root/data
@@ -27,7 +26,7 @@ services:
     build:
       context: ./cartogram-exp/
       dockerfile: Dockerfile
-    image: gocart-web
+    image: gocartio/cartogram-web
     profiles: [exp]
     env_file:
       - ./.env
@@ -37,7 +36,6 @@ services:
     environment:
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogramexp
-      - CARTOGRAM_PORT=5000
       - VITE_SERVER_PORT=5174
     command: sh -c "python -c \"import web; web.db.create_all()\" && python web.py"
     ports:
@@ -47,13 +45,13 @@ services:
       - ./cartogram-exp/data:/root/data
 
   redis:
-    image: redis
+    image: redis:alpine
     restart: always
     ports:
       - "6379:6379"
 
   postgres:
-    image: postgres:12
+    image: postgres:12-alpine
     restart: always
     ports:
       - "5432:5432"
