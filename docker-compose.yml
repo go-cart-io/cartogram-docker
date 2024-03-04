@@ -15,7 +15,6 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      - ./cartogram-web/internal:/root/internal
       - ./data/userdata:/root/internal/static/userdata
     secrets:
       - password
