@@ -11,7 +11,7 @@ services:
     environment:
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
-    command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
+    command: sh -c "printenv > /etc/environment & cron & python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
     ports:
       - "5001:5000"
     volumes:
