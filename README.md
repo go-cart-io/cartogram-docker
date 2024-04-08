@@ -97,11 +97,11 @@ Please follow this tutorial https://developer.chrome.com/docs/devtools/remote-de
 Run the following command:
 
 ```shell script
-cartogram-docker/cartogram-web/frontend$ npm run dev
+cartogram-docker/cartogram-web/frontend$ npm run build
 cartogram-docker$ docker-compose build web
 ```
 
-You may also want to push docker image into docker repository.
+You should found updated frontend code in `internal/static/dist`. The docker image should be updated with new code. You may also want to push docker image into docker repository.
 
 ```shell script
 cartogram-docker$ docker login
