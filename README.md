@@ -37,10 +37,28 @@ cartogram-docker
 
 Then, edit `.env` file as follow:
 
-```
-COMPOSE_FILE=docker-compose-dev.yml
-CARTOGRAM_DEBUG=TRUE
-```
+*   Replace
+
+    ```
+    COMPOSE_FILE=docker-compose.yml
+    ```
+
+    with
+
+    ```
+    COMPOSE_FILE=docker-compose-dev.yml
+    ```
+*   Replace
+
+    ```
+    CARTOGRAM_DEBUG=FALSE
+    ```
+
+    with
+
+    ```
+    CARTOGRAM_DEBUG=TRUE
+    ```
 
 You need to install [Node.js](https://nodejs.org), then run the following commands to start frontend development server:
 
