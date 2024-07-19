@@ -54,7 +54,7 @@ cartogram-docker/cartogram-web/frontend$ npm run dev
 Then, open anoter terminal and run the following command from the root directory of this repository (i.e., the folder containing this readme):
 
 ```shell script
-cartogram-docker$ docker-compose up
+cartogram-docker$ docker-compose --profile web up -d
 ```
 
 After all of the Docker containers have started up, all of their output will be collected into the terminal window so you can see how the web application is responding to requests, and if it encounters any errors. You can access the locally-running go-cart.io website at http://localhost:5001.
