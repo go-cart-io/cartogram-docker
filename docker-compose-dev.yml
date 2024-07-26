@@ -14,7 +14,7 @@ services:
     environment:
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
-    command: sh -c "python -c \"import web; web.db.create_all()\" && python web.py"
+    command: sh -c "pip install pytest && python web.py"
     ports:
       - "5001:5000"
     volumes:
