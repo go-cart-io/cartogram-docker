@@ -20,7 +20,7 @@ services:
     volumes:
       - ./cartogram-web/internal:/root/internal
       - ./cartogram-web/data:/root/data
-      - web_data:/root/internal/static/userdata
+      - ./data/userdata:/root/internal/static/userdata
 
   exp:
     build:
@@ -59,6 +59,3 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=cartogramexp
       - POSTGRES_USER=cartogram
       - POSTGRES_PASSWORD=password
-
-volumes:
-  web_data:
