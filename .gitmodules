@@ -1,0 +1,3 @@
+[submodule "cartogram-web"]
+	path = cartogram-web
+	url = https://github.com/go-cart-io/cartogram-web
