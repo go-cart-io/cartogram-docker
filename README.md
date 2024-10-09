@@ -3,10 +3,10 @@
 This repository contains a Docker compose file that makes it easy to install and run go-cart.io website. Steps to run the application is as follow:
 
 1. [Install Docker and Docker Compose](docs/docker.md).
-2. Clone this repository.
+2. Clone this repository. When cloning this repository, make sure to use the `--recurse-submodules` flag like so:
 
 ```shell script
-$ git clone https://github.com/go-cart-io/cartogram-docker.git
+$ git clone --recurse-submodules https://github.com/go-cart-io/cartogram-docker.git
 ```
 
 3. Copy `password.txt.dist` to `password.txt` and `.env.dist` to `.env`. You may modify the content in the files as needed.
