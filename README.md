@@ -20,12 +20,6 @@ The first time you run this command it may take a while to download and install 
 
 ## Local development and testing
 
-To start the go-cart.io web application for local development and testing, you will need to clone `cartogram-web` repository from https://github.com/go-cart-io/cartogram-web and put it inside `cartogram-docker`. You may do so by running the following command inside the `cartogram-docker` repository:
-
-```
-git clone https://github.com/go-cart-io/cartogram-web.git
-```
-
 The project stucture should now look like so:
 
 ```
@@ -36,6 +30,7 @@ cartogram-docker
 │   ├── ...
 ├── docs
 ├── .env
+├── password.txt
 ├── docker-compose.yml
 ├── docker-compose-dev.yml
 ├── ...
