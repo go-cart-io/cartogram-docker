@@ -6,14 +6,14 @@ This repository contains a Docker compose file that makes it easy to install and
 2. Clone this repository. When cloning this repository, make sure to use the `--recurse-submodules` flag like so:
 
 ```shell script
-$ git clone --recurse-submodules https://github.com/go-cart-io/cartogram-docker.git
+git clone --recurse-submodules https://github.com/go-cart-io/cartogram-docker.git
 ```
 
 3. Copy `password.txt.dist` to `password.txt` and `.env.dist` to `.env`. You may modify the content in the files as needed.
 4. Run the following command from the root directory of this repository (i.e., the folder containing this readme).
 
 ```shell script
-cartogram-docker$ docker-compose up -d
+docker-compose up -d
 ```
 
 The first time you run this command it may take a while to download and install dependencies. You can access the locally-running go-cart.io website at http://localhost:5001.
@@ -70,15 +70,15 @@ You need to install [Node.js](https://nodejs.org), then run the following comman
 
 ```shell script
 # After install Nodejs
-cartogram-docker$ cd cartogram-web/frontend
-cartogram-docker/cartogram-web/frontend$ npm install
-cartogram-docker/cartogram-web/frontend$ npm run dev
+cd cartogram-web/frontend
+npm install
+npm run dev
 ```
 
 Then, open anoter terminal and run the following command from the root directory of this repository (i.e., the folder containing this readme):
 
 ```shell script
-cartogram-docker$ docker-compose --profile web up -d
+docker-compose --profile web up -d
 ```
 
 After all of the Docker containers have started up, all of their output will be collected into the terminal window so you can see how the web application is responding to requests, and if it encounters any errors. You can access the locally-running go-cart.io website at http://localhost:5001.
@@ -121,15 +121,15 @@ Please follow this tutorial https://developer.chrome.com/docs/devtools/remote-de
 Run the following command:
 
 ```shell script
-cartogram-docker/cartogram-web/frontend$ npm run build
-cartogram-docker$ docker-compose build web
+npm run build
+docker-compose build web
 ```
 
 You should found updated frontend code in `internal/static/dist`. The docker image should be updated with new code. You may also want to push docker image into docker repository.
 
 ```shell script
-cartogram-docker$ docker login
-cartogram-docker$ docker push gocartio/cartogram-web:latest
+docker login
+docker push gocartio/cartogram-web:latest
 ```
 
 # Contact
