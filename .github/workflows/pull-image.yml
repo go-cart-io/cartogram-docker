@@ -3,8 +3,8 @@ name: Pull latest gocartio/cartogram-web image on host (go-cart.io)
 on:
   # only when triggered manually, after we have tested it ourselves
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
 
 jobs:
   pull-new-cartogram-web-image:
