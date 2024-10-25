@@ -1,0 +1,21 @@
+name: Pull latest gocartio/cartogram-web image on host (go-cart.io)
+
+on:
+  # only when triggered manually, after we have tested it ourselves
+  workflow_dispatch:
+  push:
+    branches: [ "main", "create-github-action-to-pull-new-image" ]
+
+jobs:
+  pull-new-cartogram-web-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy binary to go-cart.io
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
+           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
