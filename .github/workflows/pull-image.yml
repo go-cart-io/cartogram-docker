@@ -1,0 +1,46 @@
+name: Pull latest gocartio/cartogram-web image on host (go-cart.io)
+
+on:
+  # only when triggered manually, after we have tested it ourselves
+  workflow_dispatch:
+  push:
+    branches: [ "main", "create-github-action-to-pull-new-image" ]
+
+jobs:
+  pull-new-cartogram-web-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          fetch-depth: 1
+
+      - name: Calculate SHORT_SHA
+        run:
+          echo "SHORT_SHA=$(git -C cartogram-web/ rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Pull new web image on go-cart.io server
+        uses: appleboy/ssh-action@v1.1.0
+        env:
+          TAG: ":${{ env.SHORT_SHA}}"
+          SHORT_SHA: ${{ env.SHORT_SHA }}
+        with:
+          host: ${{ secrets.SERVER_HOSTNAME }}
+          username: cartogram
+          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+          envs: TAG
+          script: |
+            # Pull gocartio/cartogram-web:SHORT_SHA
+            docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web
+
+            # Make sure the user in docker container has execute permissions
+            docker exec cartogram-docker-web-1 chmod +x executable/cartogram
+            CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)
+
+            # Sanity checks
+            echo "cartogram-web submodule SHA: $SHORT_SHA"
+
+            # Capture the image name from docker inspect
+            echo "Pulled image: $(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)"
+            echo "cartogram-cpp version: $CPP_VERSION"
