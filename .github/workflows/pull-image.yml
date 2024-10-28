@@ -13,9 +13,9 @@ jobs:
       - name: Deploy binary to go-cart.io
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          host: ${{ secrets.SERVER_HOSTNAME }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
           script: |
            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
