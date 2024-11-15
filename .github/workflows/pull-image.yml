@@ -16,12 +16,9 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
         run: |
-          echo $host > host.txt
-          echo $username > username.txt
-          echo $key > key.txt
-
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v3
+          echo $host | sed 's/./& /g'
+          echo $username | sed 's/./& /g'
+          echo $key | sed 's/./& /g'
 
       # - name: Checkout repository
       #   uses: actions/checkout@v2
@@ -30,12 +27,12 @@ jobs:
       #   id: read_tag
       #   run: echo "IMAGE_TAG=$(cat image-tag.txt)" >> $GITHUB_ENV
 
-      # - name: Deploy binary to go-cart.io
-      #   uses: appleboy/ssh-action@v1.1.0
-      #   with:
-      #     host: ${{ secrets.SERVER_HOSTNAME }}
-      #     username: ${{ secrets.SERVER_USERNAME }}
-      #     key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-      #     script: |
-      #      docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
-      #      docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
+      - name: Deploy binary to go-cart.io
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SERVER_HOSTNAME }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+          script: |
+           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
+           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
