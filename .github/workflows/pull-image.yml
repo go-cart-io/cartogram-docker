@@ -10,23 +10,6 @@ jobs:
   pull-new-cartogram-web-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Read image tag
-        id: read_tag
-        run: echo "IMAGE_TAG=$(cat image-tag.txt)" >> $GITHUB_ENV
-
-      - name: Deploy binary to go-cart.io
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.SERVER_HOSTNAME }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-          script: |
-           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
-           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
-
       - name: Set up secret file
         env:
           host: ${{ secrets.SERVER_HOSTNAME }}
@@ -38,4 +21,23 @@ jobs:
           echo $key > key.txt
 
       - name: Run tmate
-        uses: mxschmitt/action-tmate@v2
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
+
+      # - name: Checkout repository
+      #   uses: actions/checkout@v2
+
+      # - name: Read image tag
+      #   id: read_tag
+      #   run: echo "IMAGE_TAG=$(cat image-tag.txt)" >> $GITHUB_ENV
+
+      - name: Deploy binary to go-cart.io
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.SERVER_HOSTNAME }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+          script: |
+           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
+           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
