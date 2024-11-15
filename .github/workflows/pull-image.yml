@@ -10,12 +10,27 @@ jobs:
   pull-new-cartogram-web-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy binary to go-cart.io
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v3
         with:
-          host: ${{ secrets.SERVER_HOSTNAME }}
+          detached: true
+
+      - name: Deploy binary to go-cart.io
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: 167.71.207.86
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
           script: |
-           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
-           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
+            # docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
+            # docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
+            echo 'SSH connection successful'
+
+      - name: Debug SSH command
+        env:
+          USERNAME: ${{ secrets.SERVER_USERNAME }}
+          KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add <(echo "$KEY")
+          ssh -vvv -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 "echo 'SSH connection successful'" > ssh-output.txt 2>&1
