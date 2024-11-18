@@ -37,7 +37,8 @@ jobs:
         with:
           host: ${{ secrets.SERVER_HOSTNAME }}
           username: ${{ secrets.SERVER_USERNAME }}
-          key_path: host.txt
+          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+          # key_path: host.txt
           script: |
            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
