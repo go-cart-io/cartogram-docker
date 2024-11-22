@@ -18,12 +18,12 @@ jobs:
         run: |
           echo $host > host.txt
           echo $username > username.txt
-          echo $key > key.txt
+          echo "$key" > key.txt
 
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
+      # - name: Run tmate
+      #   uses: mxschmitt/action-tmate@v3
+      #   with:
+      #     detached: true
 
       # - name: Checkout repository
       #   uses: actions/checkout@v2
