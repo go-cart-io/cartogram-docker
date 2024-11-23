@@ -16,9 +16,14 @@ jobs:
           USERNAME: ${{ secrets.SERVER_USERNAME }}
           KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
         run: |
-          ECHO $HOST > HOST.TXT
+          echo $HOST > HOST.TXT
           echo $USERNAME > username.txt
           echo "$KEY" > key.txt
+
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
 
       - name: Start SSH Agent
         uses: webfactory/ssh-agent@v0.5.4
@@ -34,6 +39,3 @@ jobs:
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
           EOF
-
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v3
