@@ -10,31 +10,14 @@ jobs:
   pull-new-cartogram-web-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up secret file
+      - name: Execute commands over SSH
         env:
           HOST: ${{ secrets.SERVER_HOSTNAME }}
           USERNAME: ${{ secrets.SERVER_USERNAME }}
           KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
         run: |
-          echo $HOST > HOST.TXT
-          echo $USERNAME > username.txt
-          echo "$KEY" > key.txt
-
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-
-      - name: Start SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-
-      - name: Execute commands over SSH
-        env:
-          HOST: ${{ secrets.SERVER_HOSTNAME }}
-          USERNAME: ${{ secrets.SERVER_USERNAME }}
-        run: |
+          eval "$(ssh-agent -s)"
+          ssh-add <(echo "$KEY")
           ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
