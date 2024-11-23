@@ -18,8 +18,6 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add <(echo "$KEY")
-          echo "first try"
-          ping -c 4 $HOST
           echo "second try"
           ping -c 4 "$HOST"
           ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
