@@ -12,35 +12,28 @@ jobs:
     steps:
       - name: Set up secret file
         env:
-          host: ${{ secrets.SERVER_HOSTNAME }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+          HOST: ${{ secrets.SERVER_HOSTNAME }}
+          USERNAME: ${{ secrets.SERVER_USERNAME }}
+          KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
         run: |
-          echo $host > host.txt
-          echo $username > username.txt
-          echo "$key" > key.txt
+          ECHO $HOST > HOST.TXT
+          echo $USERNAME > username.txt
+          echo "$KEY" > key.txt
+
+      - name: Start SSH Agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+
+      - name: Execute commands over SSH
+        env:
+          HOST: ${{ secrets.SERVER_HOSTNAME }}
+          USERNAME: ${{ secrets.SERVER_USERNAME }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
+            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
+            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
+          EOF
 
       - name: Run tmate
         uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-
-      # - name: Checkout repository
-      #   uses: actions/checkout@v2
-
-      # - name: Read image tag
-      #   id: read_tag
-      #   run: echo "IMAGE_TAG=$(cat image-tag.txt)" >> $GITHUB_ENV
-
-      - name: Deploy binary to go-cart.io
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.SERVER_HOSTNAME }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-          # key_path: ~/work/cartogram-docker/cartogram-docker/host.txt
-          # password: ${{ secrets.SERVER_PASSWORD }}
-          debug: true
-          script: |
-           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
-           docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
