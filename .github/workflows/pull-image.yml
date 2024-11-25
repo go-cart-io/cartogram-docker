@@ -18,6 +18,7 @@ jobs:
       - name: Debug SSH command
         env:
           USERNAME: ${{ secrets.SERVER_USERNAME }}
+          KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
         run: |
           echo "$KEY" > ssh_key
           # Secure the file by setting permissions
