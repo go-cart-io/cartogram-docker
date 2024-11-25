@@ -24,8 +24,6 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add <(echo "$KEY")
           echo "first try"
-          ping -c 4 "$HOST"
-          echo "second try"
           ping -c 4 167.71.207.86
           ssh -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 << 'EOF'
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
