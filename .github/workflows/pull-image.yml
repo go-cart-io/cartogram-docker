@@ -10,6 +10,11 @@ jobs:
   pull-new-cartogram-web-image:
     runs-on: ubuntu-latest
     steps:
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v3
+        with:
+          detached: true
+
       - name: Execute commands over SSH
         env:
           HOST: ${{ secrets.SERVER_HOSTNAME }}
@@ -18,9 +23,11 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add <(echo "$KEY")
-          echo "second try"
+          echo "first try"
           ping -c 4 "$HOST"
-          ssh -o StrictHostKeyChecking=no $USERNAME@$HOST << 'EOF'
+          echo "second try"
+          ping -c 4 167.71.207.86
+          ssh -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 << 'EOF'
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
           EOF
