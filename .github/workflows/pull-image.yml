@@ -23,7 +23,7 @@ jobs:
         run: |
           eval "$(ssh-agent -s)"
           ssh-add <(echo "$KEY")
-          ssh -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 << 'EOF'
+          ssh -vvv -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 << 'EOF'
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
             docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
           EOF
