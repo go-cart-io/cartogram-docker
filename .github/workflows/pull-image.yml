@@ -15,15 +15,20 @@ jobs:
         with:
           detached: true
 
-      - name: Execute commands over SSH
+      - name: Debug SSH command
         env:
-          # HOST: ${{ secrets.SERVER_HOSTNAME }}
           USERNAME: ${{ secrets.SERVER_USERNAME }}
-          KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-add <(echo "$KEY")
-          ssh -vvv -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 << 'EOF'
-            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
-            docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
-          EOF
+        run: ssh -vvv -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 "echo 'SSH connection successful'" > ssh-output.txt 2>&1
+
+      # - name: Execute commands over SSH
+      #   env:
+      #     # HOST: ${{ secrets.SERVER_HOSTNAME }}
+      #     # USERNAME: ${{ secrets.SERVER_USERNAME }}
+      #     KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+      #   run: |
+      #     eval "$(ssh-agent -s)"
+      #     ssh-add <(echo "$KEY")
+      #     ssh -vvv -o StrictHostKeyChecking=no cartogram@167.71.207.86 << 'EOF'
+      #       docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
+      #       docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
+      #     EOF
