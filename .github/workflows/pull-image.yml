@@ -20,10 +20,10 @@ jobs:
           USERNAME: ${{ secrets.SERVER_USERNAME }}
           KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
         run: |
-          echo "$KEY" > ssh_key
-          # Secure the file by setting permissions
-          chmod 600 ssh_key
-          ssh-add ssh_key
+          # echo "$KEY" > ssh_key
+          # chmod 600 ssh_key
+          eval "$(ssh-agent -s)"
+          ssh-add <(echo "$KEY")
           ssh -vvv -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 "echo 'SSH connection successful'" > ssh-output.txt 2>&1
 
       # - name: Execute commands over SSH
