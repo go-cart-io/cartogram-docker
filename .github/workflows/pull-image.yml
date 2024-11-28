@@ -10,11 +10,6 @@ jobs:
   pull-new-cartogram-web-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v3
-        with:
-          detached: true
-
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
@@ -22,14 +17,13 @@ jobs:
           fetch-depth: 1
 
       - name: Calculate SHORT_SHA
-        id: vars
         run:
           echo "SHORT_SHA=$(git -C cartogram-web/ rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Pull new web image on go-cart.io server
         uses: appleboy/ssh-action@v1.1.0
         env:
-          TAG: ":${{ steps.vars.outputs.SHORT_SHA }}"
+          TAG: ":${{ env.SHORT_SHA}}"
         with:
           host: ${{ secrets.SERVER_HOSTNAME }}
           username: cartogram
@@ -37,12 +31,16 @@ jobs:
           envs: TAG
           script: |
             # Pull gocartio/cartogram-web:SHORT_SHA
-            docker compose -f ~/cartogram-docker/docker-compose.yml pull web
-            docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps web
+            docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web
 
-            # Making sure the correct image was pulled
-            docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1
+            # Capture the image name from docker inspect
+            echo "IMAGE_NAME=$(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)" >> $GITHUB_ENV
 
-            # Sanity check by finding out the version of `cartogram-cpp`
-            CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)
-            echo "cartogram-cpp version: $CPP_VERSION"
+            # Find out the version of `cartogram-cpp`
+            echo "CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)" >> $GITHUB_ENV
+
+      - name: Sanity check
+        run: |
+          echo "cartogram-web submodule SHA: $SHORT_SHA"
+          echo "Pulled image: $IMAGE_NAME"
+          echo "cartogram-cpp version: $CPP_VERSION"
