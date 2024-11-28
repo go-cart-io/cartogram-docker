@@ -33,14 +33,14 @@ jobs:
             # Pull gocartio/cartogram-web:SHORT_SHA
             docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web
 
+            # Make sure the user in docker container has execute permissions
+            docker exec cartogram-docker-web-1 chmod +x executable/cartogram
+
+            # Sanity checks
+            echo "cartogram-web submodule SHA: $SHORT_SHA"
+
             # Capture the image name from docker inspect
-            echo "IMAGE_NAME=$(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)" >> $GITHUB_ENV
+            echo "Pulled image: $(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)"
 
             # Find out the version of `cartogram-cpp`
-            echo "CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)" >> $GITHUB_ENV
-
-      - name: Sanity check
-        run: |
-          echo "cartogram-web submodule SHA: $SHORT_SHA"
-          echo "Pulled image: $IMAGE_NAME"
-          echo "cartogram-cpp version: $CPP_VERSION"
+            echo "cartogram-cpp version: $(docker exec cartogram-docker-web-1 executable/cartogram --version)"
