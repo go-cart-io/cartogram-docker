@@ -15,22 +15,34 @@ jobs:
         with:
           detached: true
 
-      - name: Deploy binary to go-cart.io
-        uses: appleboy/ssh-action@v1.1.0
+      - name: Checkout repository
+        uses: actions/checkout@v2
         with:
-          host: 167.71.207.86
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-          script: |
-            # docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml pull web
-            # docker-compose -f /home/cartogram/cartogram-docker/docker-compose.yml up -d --no-deps web
-            echo 'SSH connection successful'
+          submodules: 'recursive'
+          fetch-depth: 1
 
-      - name: Debug SSH command
+      - name: Calculate SHORT_SHA
+        id: vars
+        run:
+          echo "SHORT_SHA=$(git -C cartogram-web/ rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Pull new web image on go-cart.io server
+        uses: appleboy/ssh-action@v1.1.0
         env:
-          USERNAME: ${{ secrets.SERVER_USERNAME }}
-          KEY: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-        run: |
-          eval "$(ssh-agent -s)"
-          ssh-add <(echo "$KEY")
-          ssh -vvv -o StrictHostKeyChecking=no $USERNAME@167.71.207.86 "echo 'SSH connection successful'" > ssh-output.txt 2>&1
+          TAG: ":${{ steps.vars.outputs.SHORT_SHA }}"
+        with:
+          host: ${{ secrets.SERVER_HOSTNAME }}
+          username: cartogram
+          key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
+          envs: TAG
+          script: |
+            # Pull gocartio/cartogram-web:SHORT_SHA
+            docker compose -f ~/cartogram-docker/docker-compose.yml pull web
+            docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps web
+
+            # Making sure the correct image was pulled
+            docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1
+
+            # Sanity check by finding out the version of `cartogram-cpp`
+            CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)
+            echo "cartogram-cpp version: $CPP_VERSION"
