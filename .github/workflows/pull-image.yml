@@ -58,4 +58,4 @@ jobs:
             echo "  - URL: https://github.com/mgastner/cartogram-cpp/releases/tag/$CPP_VERSION"
 
       - name: Display `ssh-action` outputs in Summary
-        run: echo "${{ steps.ssh.outputs.stdout }}" >> $GITHUB_STEP_SUMMARY
+        run: cat <(echo "${{ steps.ssh.outputs.stdout }}") >> $GITHUB_STEP_SUMMARY
