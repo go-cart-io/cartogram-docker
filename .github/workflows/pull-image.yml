@@ -4,7 +4,7 @@ on:
   # only when triggered manually, after we have tested it ourselves
   workflow_dispatch:
   push:
-    branches: [ "main", "create-github-action-to-pull-new-image" ]
+    branches: [ "main" ]
 
 jobs:
   pull-new-cartogram-web-image:
