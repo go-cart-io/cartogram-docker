@@ -21,7 +21,8 @@ jobs:
           echo "SHORT_SHA=$(git -C cartogram-web/ rev-parse --short HEAD)" >> $GITHUB_ENV
 
       - name: Pull new web image on go-cart.io server
-        uses: appleboy/ssh-action@v1.1.0
+        id: ssh
+        uses: appleboy/ssh-action@master
         env:
           TAG: ":${{ env.SHORT_SHA}}"
           SHORT_SHA: ${{ env.SHORT_SHA }}
@@ -30,17 +31,30 @@ jobs:
           username: cartogram
           key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
           envs: TAG
+          capture_stdout: 'true'
           script: |
+            echo "# Docker Outputs"
+            echo "`docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web` output:"
+            echo "```"
             # Pull gocartio/cartogram-web:SHORT_SHA
             docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web
+            echo "```"
 
-            # Make sure the user in docker container has execute permissions
+            echo "`docker exec` output:"
+            echo "```" # Make sure the user in docker container has execute permissions
             docker exec cartogram-docker-web-1 chmod +x executable/cartogram
             CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)
+            echo "```"
 
-            # Sanity checks
-            echo "cartogram-web submodule SHA: $SHORT_SHA"
+            echo "# Sanity Checks"
+            echo "- `cartogram-web` submodule SHA: $SHORT_SHA"
+            echo "  - URL: https://github.com/go-cart-io/cartogram-web/releases/tag/$SHORT_SHA"
 
             # Capture the image name from docker inspect
-            echo "Pulled image: $(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)"
-            echo "cartogram-cpp version: $CPP_VERSION"
+            echo "- Pulled image: $(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)"
+            echo "  - URL: https://hub.docker.com/r/gocartio/cartogram-web/tags?name=$SHORT_SHA"
+            echo "- `cartogram-cpp` version: $CPP_VERSION"
+            echo "  - URL: https://github.com/mgastner/cartogram-cpp/releases/tag/$CPP_VERSION"
+
+      - name: Display `ssh-action` outputs in Summary
+        run: echo ${{ steps.ssh.outputs.stdout }} >> $GITHUB_STEP_SUMMARY
