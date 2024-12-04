@@ -4,7 +4,7 @@ on:
   # only when triggered manually, after we have tested it ourselves
   workflow_dispatch:
   push:
-    branches: [ "main", "create-github-action-to-pull-new-image" ]
+    branches: [ "main" ]
 
 jobs:
   pull-new-cartogram-web-image:
@@ -29,7 +29,7 @@ jobs:
           host: ${{ secrets.SERVER_HOSTNAME }}
           username: cartogram
           key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-          envs: TAG
+          envs: TAG, SHORT_SHA
           script: |
             # Pull gocartio/cartogram-web:SHORT_SHA
             docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web
