@@ -2,13 +2,15 @@ services:
   web:
     image: gocartio/cartogram-web${TAG}
     restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     env_file:
       - ./.env
-    depends_on:
-      - redis
-      - postgres
     environment:
-      - CARTOGRAM_RATE_LIMIT=1/minute
+      - CARTOGRAM_RATE_LIMIT=20/minute
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
     command: sh -c "cron & ./gunicorn.sh"
@@ -16,30 +18,6 @@ services:
       - "5001:5000"
     volumes:
       - ./data/userdata:/root/internal/static/userdata
-    secrets:
-      - password
-    dns:
-      - 8.8.8.8
-
-  exp:
-    image: gocartio/cartogram-web
-    profiles: [exp]
-    env_file:
-      - ./.env
-    depends_on:
-      - redis
-      - postgres
-    environment:
-      - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogramexp
-      - POSTGRES_PASSWORD_FILE=/run/secrets/password
-      - VITE_SERVER_PORT=5174
-      - CARTOGRAM_GUNICORN_WORKERS=1
-    command: sh -c "python -c \"import web; web.db.create_all()\" && ./gunicorn.sh"
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./cartogram-exp/internal:/root/internal
-      - ./cartogram-exp/data:/root/data
     secrets:
       - password
     dns:
@@ -55,12 +33,12 @@ services:
     environment:
       - POSTGRES_USER=cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
-      - POSTGRES_MULTIPLE_DATABASES=cartogramexp
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-      - ./create-databases.sh:/docker-entrypoint-initdb.d/create-databases.sh
     secrets:
       - password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
 
 secrets:
   password:
