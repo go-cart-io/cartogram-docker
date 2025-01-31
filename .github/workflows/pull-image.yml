@@ -10,29 +10,28 @@ jobs:
   pull-new-cartogram-web-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          submodules: 'recursive'
-          fetch-depth: 1
-
-      - name: Calculate SHORT_SHA
-        run:
-          echo "SHORT_SHA=$(git -C cartogram-web/ rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - name: Pull new web image on go-cart.io server
+      - name: Update cartogram docker and web image on go-cart.io server
         uses: appleboy/ssh-action@v1.1.0
-        env:
-          TAG: ":${{ env.SHORT_SHA}}"
-          SHORT_SHA: ${{ env.SHORT_SHA }}
         with:
           host: ${{ secrets.SERVER_HOSTNAME }}
           username: cartogram
           key: ${{ secrets.SERVER_SSH_ACCESS_KEY }}
-          envs: TAG, SHORT_SHA
           script: |
+            # Reset all changes before pull to prevent conflicts
+            cd ~/cartogram-docker
+            git fetch origin
+            git reset --hard origin/main
+            git pull origin main
+
+            SHORT_SHA=$(git ls-tree HEAD cartogram-web | awk '{print $3}' | xargs git rev-parse --short)
+            export TAG=":$SHORT_SHA"
+
             # Pull gocartio/cartogram-web:SHORT_SHA
-            docker compose -f ~/cartogram-docker/docker-compose.yml up -d --no-deps --pull always web
+            docker compose -f docker-compose.yml pull web
+            docker compose -f docker-compose.yml up -d
+
+            # Clean up old image
+            docker image prune -a -f
 
             # Make sure the user in docker container has execute permissions
             docker exec cartogram-docker-web-1 chmod +x executable/cartogram
@@ -40,6 +39,7 @@ jobs:
 
             # Sanity checks
             echo "cartogram-web submodule SHA: $SHORT_SHA"
+            echo "Tag: $TAG"
 
             # Capture the image name from docker inspect
             echo "Pulled image: $(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)"
