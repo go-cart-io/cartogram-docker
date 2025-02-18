@@ -14,7 +14,7 @@ services:
     environment:
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
-    command: sh -c "pip install pytest pytest-mock && python web.py"
+    command: sh -c "pip install pytest pytest-mock ruff && python web.py"
     ports:
       - "5001:5000"
     volumes:

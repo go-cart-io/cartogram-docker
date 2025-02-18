@@ -92,6 +92,32 @@ docker compose -f docker-compose-dev.yml restart
 
 When you would like to shut down the go-cart.io web application, simply press `Ctrl-C` in the terminal window you started Docker Compose and npm in. After a few moments, the state of all the Docker containers will be saved and the application will gracefully come to a halt.
 
+### Coding standard and quality
+
+To maintain coding standards and quality, we use Prettier and ESLint for the frontend, and Ruff for the backend.
+
+We strongly recommend using [VSCode](https://code.visualstudio.com/) for development. Open `.vscode/cartogram-docker.code-workspace`, and the IDE should handle formatting and most linting on save. Some linting issues may require manual fixes, but the IDE will automatically inform you as you code.
+
+Otherwise, you should manually run the following command:
+
+For frontend:
+
+```shell script
+cd cartogram-web/frontend
+npm run format
+npm run lint
+```
+
+For backend:
+
+```shell script
+docker exec -it cartogram-docker-web-1 /bin/bash
+ruff format
+ruff check --fix
+```
+
+Please fix all linting issues before commit.
+
 ### Pushing changes to go-cart.io server
 
 While you can make changes and test them locally, you need to follow the instructions [here](https://github.com/go-cart-io/cartogram-docker/blob/main/docs/deploy.md) to push changes to the go-cart.io server. If you are not part of the core development team, you may not have permission to do so. Please create a pull request in the relevant repository (e.g., [go-cart-io/cartogram-web](https://github.com/go-cart-io/cartogram-web) if you made changes in the `cartogram-web` folder) so we can push the changes for you.
