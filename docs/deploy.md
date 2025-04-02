@@ -2,9 +2,10 @@
 
 The go-cart.io web application consists of several components which must be deployed properly for the application to work for end-users. We suggest using [cartogram-ansible](https://github.com/go-cart-io/cartogram-ansible) for initial deployment. After that, deployment of updated versions of the application can be automated. This document provides step-by-step instructions for performing the following tasks:
 
-- [Making changes to `cartogram-cpp`](#making-changes-to-cartogram-cpp)
-- [Making changes to `cartogram-web`](#making-changes-to-cartogram-web)
-- [Making changes to `cartogram-docker`](#making-changes-to-cartogram-docker)
+- [Deployment of go-cart.io with Docker](#deployment-of-go-cartio-with-docker)
+  - [Making changes to `cartogram-cpp`](#making-changes-to-cartogram-cpp)
+  - [Making changes to `cartogram-web`](#making-changes-to-cartogram-web)
+  - [Making changes to `cartogram-docker`](#making-changes-to-cartogram-docker)
 
 ## Making changes to `cartogram-cpp`
 
@@ -23,7 +24,7 @@ If you only want to make changes to the website, then you may follow the steps b
 
 1. Make changes to a new branch in the `cartogram-web` submodule.
    - You can do this by running `git checkout -b <branch-name>` in the `cartogram-web` directory.
-2. If you made changes to the frontend, run the following command to compile all frontend changes for distribution:
+2. If you make changes to the frontend, run the following command to compile all frontend changes for distribution:
    ```
    npm run build
    ```

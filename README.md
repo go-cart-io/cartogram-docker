@@ -25,10 +25,12 @@ cp password.txt.dist password.txt && cp .env.dist .env
 
 4. Modify `password.txt` and `.env` as needed, leaving `password.txt.dist` and `.env.dist` unchanged.
 
-5. Run the following commands from the root directory of this repository (i.e., the folder containing this readme).
+5. Run the following commands from the root directory of this repository (i.e., the folder containing this readme):
 
 ```shell script
-export TAG=":$(git ls-tree HEAD cartogram-web | awk '{print $3}' | xargs git rev-parse --short)"
+export TAG=":$(cd cartogram-web/ && git rev-parse --short HEAD)"
+echo "$TAG" # to make sure the tag is what you expect
+docker compose pull web
 docker compose up -d
 ```
 
