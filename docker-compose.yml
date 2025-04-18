@@ -22,6 +22,12 @@ services:
       - password
     dns:
       - 8.8.8.8
+    logging:
+      driver: syslog
+      options:
+        tag: "web"
+        labels: "go-cart"
+        syslog-facility: "daemon"
 
   redis:
     image: redis:alpine
