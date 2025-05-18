@@ -1,5 +1,5 @@
 services:
-  web:
+  webdev:
     build:
       context: ./cartogram-web/
       dockerfile: Dockerfile
@@ -14,17 +14,17 @@ services:
     environment:
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
-    command: sh -c "pip install pytest pytest-mock ruff && python web.py"
+    command: sleep infinity
     ports:
-      - "5001:5000"
+      - "5000:5000"
     volumes:
-      - ./cartogram-web/internal:/root/internal
-      - ./cartogram-web/tools:/root/tools
+      - ./cartogram-web:/root
       - ./data/userdata:/root/internal/static/userdata
+      - ./data/tmp:/root/internal/tmp
     logging:
       driver: syslog
       options:
-        tag: "web"
+        tag: "webdev"
         labels: "dev"
         syslog-facility: "daemon"
 

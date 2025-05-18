@@ -18,6 +18,7 @@ services:
       - "5001:5000"
     volumes:
       - ./data/userdata:/root/internal/static/userdata
+      - ./data/tmp:/root/internal/tmp
     secrets:
       - password
     dns:

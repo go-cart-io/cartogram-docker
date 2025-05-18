@@ -1,0 +1,49 @@
+{
+  "name": "go-cart.io",
+  "dockerComposeFile": "../docker-compose-dev.yml",
+  "service": "webdev",
+  "workspaceFolder": "/root",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "pip install pytest pytest-mock ruff && npm install && chmod +x ./tools/pull-executable.sh && ./tools/pull-executable.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "ruff.path": ["/usr/local/bin/ruff"],
+        "files.exclude": {
+          "**/__pycache__": true,
+          "**/.pytest_cache": true,
+          "**/.ruff_cache": true,
+          "**/.idea": true,
+          "**/*.DS_Store": true,
+          "**/.Rhistory": true,
+          "**/.cache": true,
+          "**/.vscode-server": true,
+          "**/.dotnet": true,
+          "**/.gnupg": true,
+          "**/.npm": true,
+          "**/.qodo": true,
+          "**/.bash_history": true,
+          "**/node_modules": true
+        },
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[html]": {
+          "editor.defaultFormatter": "vscode.html-language-features"
+        },
+        "conventionalCommits.scopes": [
+          "backend",
+          "ui",
+          "ui-maker",
+          "ui-viewer",
+          "security"
+        ]
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  }
+}
