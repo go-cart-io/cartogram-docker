@@ -1,6 +1,8 @@
 # cartogram-docker: Docker Application for Web-based Cartogram Generator
 
-cartogram-docker provides a Docker Compose setup for running [cartogram-web](https://github.com/go-cart-io/cartogram-web) locally or on-premise. For quick online use, visit https://go-cart.io instead.
+Local Docker deployment allows you to run [cartogram-web](https://github.com/go-cart-io/cartogram-web) on your own machine or private server using the provided Docker Compose setup. This is ideal for development, testing, or self-hosted deployments.
+
+For a hassle-free online experience, you can also use the hosted version at https://go-cart.io.
 
 ## Prerequisites for Windows Users
 
@@ -22,14 +24,22 @@ cartogram-docker provides a Docker Compose setup for running [cartogram-web](htt
 
 1. Install Docker and Docker Compose using [Official installation guide](https://docs.docker.com/engine/install/)
 
-2. Clone repository
+   - Add your user to the docker group by using a terminal to run:
 
-   ```shell
+   ```shell script
+   sudo usermod -aG docker $USER
+   ```
+
+   - Sign out and back in again so your changes take effect.
+
+2. Clone repository:
+
+   ```shell script
    git clone https://github.com/go-cart-io/cartogram-docker.git
    cd cartogram-docker
    ```
 
-3. Copy configuration files
+3. Copy configuration files:
 
    ```shell script
    cp password.txt.dist password.txt && cp .env.dist .env
@@ -40,13 +50,18 @@ cartogram-docker provides a Docker Compose setup for running [cartogram-web](htt
 5. Run the following commands from the root directory of this repository (i.e., the folder containing this readme):
 
    ```shell script
-   export TAG=":$(cd cartogram-web/ && git rev-parse --short HEAD)"
-   echo "$TAG" # to make sure the tag is what you expect
+   export TAG=":latest"
    docker compose pull web
    docker compose up -d
    ```
 
    The first time you run this command, it may take a while to download and install dependencies. Once everything stats up, you should be able to access the locally-running instance of go-cart.io website at [http://localhost:5001](http://localhost:5001).
+
+   You can also change the TAG to a specific version. For example:
+
+   ```shell script
+   export TAG=":1.0.0"
+   ```
 
 6. When you would like to stop the go-cart.io local instance, use the command:
 
