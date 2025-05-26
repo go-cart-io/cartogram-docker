@@ -3,6 +3,9 @@ name: Pull latest gocartio/cartogram-web image on host (go-cart.io)
 on:
   # only when triggered manually, after we have tested it ourselves
   workflow_dispatch:
+    inputs:
+      version:
+        required: true
   # push:
   #   branches: [ "main" ]
 
@@ -23,10 +26,7 @@ jobs:
             git reset --hard origin/main
             git pull origin main
 
-            SHORT_SHA=$(git ls-tree HEAD cartogram-web | awk '{print $3}' | xargs git rev-parse --short)
-            export TAG=":$SHORT_SHA"
-
-            # Pull gocartio/cartogram-web:SHORT_SHA
+            export TAG=":${{ github.event.inputs.version }}"
             docker compose -f docker-compose.yml pull web
             docker compose -f docker-compose.yml up -d
 
@@ -36,10 +36,6 @@ jobs:
             # Make sure the user in docker container has execute permissions
             docker exec cartogram-docker-web-1 chmod +x executable/cartogram
             CPP_VERSION=$(docker exec cartogram-docker-web-1 executable/cartogram --version)
-
-            # Sanity checks
-            echo "cartogram-web submodule SHA: $SHORT_SHA"
-            echo "Tag: $TAG"
 
             # Capture the image name from docker inspect
             echo "Pulled image: $(docker inspect --format='{{.Config.Image}}' cartogram-docker-web-1)"
