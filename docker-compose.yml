@@ -13,7 +13,7 @@ services:
       - CARTOGRAM_RATE_LIMIT=20/minute
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:{}@postgres/cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
-    command: sh -c "cron & ./gunicorn.sh"
+    command: production
     ports:
       - "5001:5000"
     volumes:
