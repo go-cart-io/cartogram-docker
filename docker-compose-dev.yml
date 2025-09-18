@@ -14,9 +14,10 @@ services:
     environment:
       - CARTOGRAM_DEBUG=TRUE
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
-    command: sleep infinity
+    command: development
     ports:
       - "5000:5000"
+      - "5173:5173"
     volumes:
       - ./cartogram-web:/root
       - ./data/userdata:/root/internal/static/userdata
