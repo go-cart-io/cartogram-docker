@@ -22,7 +22,9 @@ For a hassle-free online experience, you can also use the hosted version at http
 
 ## Setup Instructions
 
-1. Install Docker and Docker Compose using [Official installation guide](https://docs.docker.com/engine/install/)
+1. Install Docker and Docker Compose using [Official installation guide](https://docs.docker.com/engine/install/).
+
+   For Linux and Windows wsl users:
 
    - Add your user to the docker group by using a terminal to run:
 
@@ -63,12 +65,16 @@ For a hassle-free online experience, you can also use the hosted version at http
    export TAG=":1.0.0"
    ```
 
-6. When you would like to stop the go-cart.io local instance, use the command:
+6. When you would like to permanently stop the go-cart.io local instance, use the command:
 
    ```shell script
-   docker compose stop
+   docker compose down
    ```
+
+## Usage
+
+Please follow instructions on https://guides.go-cart.io/#/tutorials/online, but access your locally-running instance at [http://localhost:5001](http://localhost:5001) instead of https://go-cart.io.
 
 ## Contributing
 
-We welcome and encourage contributions! For details on setting up a development environment and contribution guidelines, please visit our [Developer Guide](https://guides.go-cart.io/developers).
+We welcome and encourage contributions! For details on setting up a development environment and contribution guidelines, please visit our [Developer Guide](https://guides.go-cart.io/#/developers).
