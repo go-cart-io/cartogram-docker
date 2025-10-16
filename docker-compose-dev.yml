@@ -16,18 +16,12 @@ services:
       - CARTOGRAM_DATABASE_URI=postgresql://cartogram:password@postgres/cartogram
     command: development
     ports:
-      - "5000:5000"
+      - "5005:5000"
       - "5173:5173"
     volumes:
       - ./cartogram-web:/root
       - ./data/userdata:/root/internal/static/userdata
       - ./data/tmp:/root/internal/tmp
-    logging:
-      driver: syslog
-      options:
-        tag: "webdev"
-        labels: "dev"
-        syslog-facility: "daemon"
 
   redis:
     image: redis:alpine
