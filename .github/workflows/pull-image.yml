@@ -27,8 +27,8 @@ jobs:
             git pull origin main
 
             export TAG=":${{ github.event.inputs.version }}"
-            docker compose -f docker-compose.yml pull web
-            docker compose -f docker-compose.yml up -d
+            docker compose -f docker.compose.yaml pull web
+            docker compose -f docker.compose.yaml up -d
 
             # Clean up old image
             docker image prune -a -f

@@ -1,6 +1,6 @@
 {
   "name": "go-cart.io",
-  "dockerComposeFile": "../docker-compose-dev.yml",
+  "dockerComposeFile": "../compose.dev.yaml",
   "service": "webdev",
   "workspaceFolder": "/root",
   "shutdownAction": "stopCompose",
