@@ -75,6 +75,55 @@ For a hassle-free online experience, you can also use the hosted version at http
 
 Please follow instructions on https://guides.go-cart.io/#/tutorials/online, but access your locally-running instance at [http://localhost:5001](http://localhost:5001) instead of https://go-cart.io.
 
+## Development Setup
+
+For development with live code reloading, use `docker-compose-dev.yml`. This mounts the local `cartogram-web` source into the container so changes take effect immediately.
+
+For the **VS Code Dev Container** workflow, see the [Developer Guide](https://guides.go-cart.io/#/developers/cartogram-web).
+
+### CLI Setup (without VS Code)
+
+**Prerequisites:** [Docker Desktop](https://docs.docker.com/desktop/) or [Colima](https://github.com/abiosoft/colima) (macOS/Linux), and [Node.js](https://nodejs.org/).
+
+1. Clone `cartogram-web` into this directory (or symlink it):
+
+   ```shell script
+   git clone https://github.com/go-cart-io/cartogram-web.git
+   ```
+
+2. Copy the config and start containers:
+
+   ```shell script
+   cp .env.dist .env
+   sed -i 's/docker-compose.yml/docker-compose-dev.yml/' .env
+   docker compose up -d --build
+   ```
+
+3. Start Flask inside the container:
+
+   ```shell script
+   docker compose exec -d webdev \
+     sh -c "cd /root/internal && flask run --host=0.0.0.0 --port=5000 --debug"
+   ```
+
+4. Start the Vite dev server locally:
+
+   ```shell script
+   cd cartogram-web/frontend
+   npm install
+   npm run dev
+   ```
+
+5. Access the site at [http://localhost:5005](http://localhost:5005).
+
+### Stopping
+
+```shell script
+docker compose -f docker-compose-dev.yml down
+```
+
+If using Colima: `colima stop`
+
 ## Contributing
 
 We welcome and encourage contributions! For details on setting up a development environment and contribution guidelines, please visit our [Developer Guide](https://guides.go-cart.io/#/developers).
