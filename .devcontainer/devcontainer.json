@@ -4,6 +4,7 @@
   "service": "webdev",
   "workspaceFolder": "/root",
   "shutdownAction": "stopCompose",
+  "forwardPorts": [5173],
   "postCreateCommand": "pip install pytest pytest-mock ruff && npm install && chmod +x ./tools/pull-executable.sh && ./tools/pull-executable.sh",
   "customizations": {
     "vscode": {

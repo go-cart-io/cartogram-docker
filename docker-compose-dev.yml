@@ -17,7 +17,6 @@ services:
     command: development
     ports:
       - "5005:5000"
-      - "5173:5173"
     volumes:
       - ./cartogram-web:/root
       - ./data/userdata:/root/internal/static/userdata
