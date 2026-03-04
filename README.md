@@ -75,6 +75,26 @@ For a hassle-free online experience, you can also use the hosted version at http
 
 Please follow instructions on https://guides.go-cart.io/#/tutorials/online, but access your locally-running instance at [http://localhost:5001](http://localhost:5001) instead of https://go-cart.io.
 
+## Server-related Actions
+
+This repository is intended for local Docker deployments.
+
+For server-related actions on go-cart.io, please use the [cartogram-web](https://github.com/go-cart-io/cartogram-web) repository. It contains the deployment workflows and scripts for:
+
+- **Build, publish, and release** a new `gocartio/cartogram-web` image (with optional server update):
+
+  ```shell script
+  bash tools/docker-publish.sh
+  ```
+
+- **Revert** go-cart.io to a specific released version:
+
+  ```shell script
+  bash tools/revert-version.sh <version>
+  ```
+
+These scripts trigger the corresponding GitHub Actions in `cartogram-web` (`Build, Publish, Release` and `Revert to a specific version on go-cart.io`).
+
 ## Contributing
 
 We welcome and encourage contributions! For details on setting up a development environment and contribution guidelines, please visit our [Developer Guide](https://guides.go-cart.io/#/developers).
