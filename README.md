@@ -25,7 +25,6 @@ For a hassle-free online experience, you can also use the hosted version at http
 1. Install Docker and Docker Compose using [Official installation guide](https://docs.docker.com/engine/install/).
 
    For Linux and Windows wsl users:
-
    - Add your user to the docker group by using a terminal to run:
 
    ```shell script
@@ -102,3 +101,63 @@ We welcome and encourage contributions! For details on setting up a development 
 ## Funding
 
 Development of this software has been supported by the Ministry of Education, Singapore, under its Academic Research Fund Tier 2 (EP2) programme (Award No. MOE-T2EP20221-0007). The views expressed in this repository are those of the authors and do not necessarily reflect the views of the Ministry of Education, Singapore.
+
+## Troubleshooting: Upgrading Database from v12 to v18 (Previous Repo Versions)
+
+If you are updating from an older version of this repository that used PostgreSQL `12-alpine` to the latest version (`18-alpine`), a direct container restart will fail because PostgreSQL 18 cannot read v12 data files and requires a new volume path structure.
+
+Follow these steps to safely back up your data, update your environment, and restore your database:
+
+1. **Create a Full Database Backup:** Do this while your old v12 container is still running.
+   Export all databases, roles, and schemas from your running version 12 container to your host machine:
+
+```bash
+docker exec -t cartogram-docker-postgres-1 pg_dumpall -c -U cartogram > postgres12_backup.sql
+```
+
+2. **Shut Down the Stack:** Stops all running services.
+   Bring down the containers so you can safely reset the local data directory:
+
+```bash
+docker compose down
+```
+
+3. **Reset the Local Data Directory:** Postgres 18 requires the volume mounted at /var/lib/postgresql.
+   Move your old incompatible v12 data folder out of the way and create a clean directory for version 18:
+
+```bash
+mv ./data/postgres ./data/postgres_old
+mkdir -p ./data/postgres
+```
+
+4. **Start the Upgraded Stack:** Docker Compose will spin up postgres:18-alpine with the new volume path.
+   Pull the latest code changes (ensuring your `docker-compose.yml` points to `/var/lib/postgresql`) and start your containers:
+
+```bash
+git pull
+docker compose up -d
+```
+
+_(Wait a few seconds for initialization. Run `docker compose logs postgres` to verify it is healthy)._
+
+5. **Restore Your Data:** Populates your tables, users, and schemas into v18.
+   Feed your saved SQL backup file back into the new container:
+
+```bash
+docker exec -i cartogram-docker-postgres-1 psql -U cartogram < postgres12_backup.sql
+
+```
+
+6. **Clean Up Old Data:** Optional cleanup once verified.
+   Once you confirm your application is running correctly and connecting to the database, you can safely delete the backup data:
+
+```bash
+rm -rf ./data/postgres_old
+rm postgres12_backup.sql
+```
+
+**Note on Authentication:** If your web application throws a `password authentication failed` error after restoring, your old v12 role password may have overwritten the new container's password. You can fix this by logging into the database (`docker exec -it cartogram-docker-postgres-1 psql -U cartogram`) and running:
+
+```sql
+ALTER USER cartogram WITH PASSWORD 'your_password_from_password_txt';
+```

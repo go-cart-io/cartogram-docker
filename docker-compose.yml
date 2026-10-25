@@ -28,13 +28,13 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:12-alpine
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_USER=cartogram
       - POSTGRES_PASSWORD_FILE=/run/secrets/password
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql
     secrets:
       - password
     healthcheck:
